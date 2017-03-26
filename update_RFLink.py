@@ -13,6 +13,14 @@ import xml.etree.ElementTree as ET
 from distutils import spawn
 
 
+def find_data_file(filename):
+    if getattr(sys, 'frozen', False):
+        datadir = os.path.dirname(sys.executable)
+    else:
+        datadir = os.path.dirname(__file__)
+    return os.path.join(datadir, filename)
+
+
 def find_domoticz_port():
     import psutil
     for pid in psutil.pids():
@@ -23,8 +31,7 @@ def find_domoticz_port():
 
 
 config = ConfigParser.ConfigParser()
-current_dir = os.path.dirname(os.path.realpath(__file__))
-config_file = os.path.join(current_dir, 'settings.ini')
+config_file = find_data_file('settings.ini')
 config.readfp(open(config_file))
 
 ip = config.get('general', 'ip')
